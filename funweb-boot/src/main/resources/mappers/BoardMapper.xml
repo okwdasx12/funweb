@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace는 MemberMapper 인터페이스 이름으로 설정 -->
+<mapper namespace="com.example.mapper.BoardMapper">
+
+	<insert id="insertBoard"><!-- id속성은 메소드 이름 -->
+		INSERT INTO board (num,name,passwd,subject,content,readcount,ip,reg_date,re_ref,re_lev,re_seq) 
+		VALUES (#{num}, #{name}, #{passwd}, #{subject}, #{content}, #{readcount}, #{ip}, #{regDate}, #{reRef}, #{reLev}, #{reSeq}) 
+	</insert>
+	
+	<select id="getBoards" resultType="boardVo">
+		SELECT * 
+		FROM board 
+		<if test="category =='content'">
+			WHERE content LIKE CONCAT('%', #{search}, '%') 
+		</if>
+		<if test="category =='subject'">
+			WHERE subject LIKE CONCAT('%', #{search}, '%') 
+		</if>
+		<if test="category =='name'">
+			WHERE name LIKE CONCAT('%', #{search}, '%') 
+		</if>
+		
+		ORDER BY re_ref DESC, re_seq ASC 
+		LIMIT #{startRow}, #{pageSize}
+	</select>
+	
+	<select id="getTotalCount" resultType="int">
+		select count(*)
+		from board
+		<if test="category =='content'">
+			WHERE content LIKE CONCAT('%', #{search}, '%') 
+		</if>
+		<if test="category =='subject'">
+			WHERE subject LIKE CONCAT('%', #{search}, '%') 
+		</if>
+		<if test="category =='name'">
+			WHERE name LIKE CONCAT('%', #{search}, '%') 
+		</if>
+	</select>
+	
+	
+	
+	<select id="getBoardByNum" resultType="boardVo">
+		SELECT * FROM board WHERE num = #{num}
+	</select>
+	
+	
+	<update id="updateReadcount">
+		UPDATE board 
+		SET readcount = readcount + 1 
+		WHERE num = #{num}
+	</update>
+	
+	<update id="updateReplycnt">
+		UPDATE board
+		SET replycnt = replycnt + #{amount}
+		WHERE num = #{bno}
+	</update>
+	
+	
+	<update id="update">
+		UPDATE board 
+		SET name = #{name}, passwd = #{passwd}, subject = #{subject}, content = #{content} 
+		WHERE num = #{num}
+	</update>
+	
+	
+	<update id="updateReSeqByReRef">
+		UPDATE board 
+		SET re_seq = re_seq + 1 
+		WHERE re_ref = #{reRef} 
+		AND re_seq > #{reSeq} 
+	</update>
+	
+	
+	<select id="getBoardAndAttachfilesByNum" resultMap="boardAndAttachfiles">
+		SELECT b.num, b.name, b.passwd, b.subject, b.content, b.readcount, b.ip, b.reg_date, b.re_ref, b.re_lev, b.re_seq, b.replycnt ,a.* 
+		FROM board b LEFT OUTER JOIN attachfile a 
+		ON b.num = a.bno 
+		WHERE b.num = #{num} 
+	</select>
+	
+	<resultMap id="boardAndAttachfiles" type="boardVo">
+		<id column="num" property="num" />
+		<result column="name" property="name" />
+		<result column="passwd" property="passwd" />
+		<result column="subject" property="subject" />
+		<result column="content" property="content"/>
+		<result column="readcount" property="readcount" />
+		<result column="ip" property="ip" />
+		<result column="reg_date" property="regDate" />
+		<result column="re_ref" property="reRef" />
+		<result column="re_lev" property="reLev" />
+		<result column="re_seq" property="reSeq" />
+		<result column="replycnt" property="replycnt" />
+		<collection property="attachList" ofType="attachfileVo">
+			<id column="uuid" property="uuid"/>
+			<result column="filename" property="filename"/>
+			<result column="uploadpath" property="uploadpath"/>
+			<result column="image" property="image"/>
+			<result column="bno" property="bno"/>
+		</collection>
+	</resultMap>
+	
+
+</mapper>
+
+
+
+
+

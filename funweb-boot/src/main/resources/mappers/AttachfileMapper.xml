@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace는 AttachfileMapper 인터페이스 이름으로 설정 -->
+<mapper namespace="com.example.mapper.AttachfileMapper">
+
+	<delete id="deleteAttachfilesByUuids">
+		DELETE
+		FROM attachfile 
+		WHERE uuid IN 
+		<foreach item="uuid" index="index" collection="uuids"
+			open="(" separator="," close=")">
+			#{uuid}
+		</foreach>
+	</delete>
+
+
+</mapper>
+
+
+
+
+

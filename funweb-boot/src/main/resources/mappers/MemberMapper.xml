@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace는 MemberMapper 인터페이스 이름으로 설정 -->
+<mapper namespace="com.example.mapper.MemberMapper">
+
+	<insert id="insert"><!-- id 속성은 메소드 이름 -->
+		INSERT INTO member (id,passwd,name,email,reg_date,address,tel,mtel) 
+		VALUES (#{id}, #{passwd}, #{name}, #{email}, #{regDate}, #{address}, #{tel}, #{mtel}) 
+	</insert>
+	
+	<update id="update">
+		update member set name=#{name}, passwd=#{passwd}, email=#{email} where id=#{id}
+	</update>
+	
+	<update id="testUpdate">
+		update member set name=#{name}, passwd=#{passwd}, email=#{email} where id=#{id}
+	</update>
+</mapper>
